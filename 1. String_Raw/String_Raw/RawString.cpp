@@ -2,12 +2,15 @@
 #include <cstdlib>
 
 String::String(const char* string) {
+	// Do a first pass to determine the size of the input string
+	// and allocate the corresponding memory
 	mem_alloc = 0;
 	while (*(string + mem_alloc) != 0) 
 		++mem_alloc;
-
 	this->string = (char*)std::malloc(sizeof(char) * (mem_alloc + 1));
 	
+	// Copy all memory positions. Add 1 to 'mem_alloc' to account for
+	// 00 position that determines the end of the string
 	for (unsigned int i = 0; i < mem_alloc; i++) 
 		*(this->string + i) = *(string + i);
 	*(this->string + mem_alloc) = 0;
@@ -41,8 +44,7 @@ String::~String() {
 }
 
 String String::operator+ (const String other) const {
-	String s(*this, other);
-	return s;
+	return String(*this, other);
 }
 
 bool String::operator== (const String &other) const {

@@ -13,15 +13,15 @@ public:
 
 	String(const String &a, const String &b);
 
-	~String();
+	virtual ~String();
 
 	String operator+ (const String other) const;
 
 	bool operator== (const String &other) const;
 
-	int Length() {	return mem_alloc - 1; }
+	int Length() const { return mem_alloc - 1; }
 
-	char* Value() { return string; }
+	char* Value() const { return string; }
 
 };
 
