@@ -16,19 +16,21 @@ public:
 
 	void Scale(float ratio)									{ x = (T)((float)x * ratio); y = (T)((float)y * ratio); z = (T)((float)z * ratio); }
 
-	double Magnitude() const								{ return sqrt(x*x + y * y + z * z); }
+	double Magnitude() const								{ return sqrt(x*x + y*y + z*z); }
 
-	void Normalize();
+	inline void Normalize();
 
 	double DistanceTo(const Vector3<T> &other) const		{ return Vector3(*this - other).Magnitude(); }
 };
 
 template <class T>
-void Vector3<T>::Normalize() {
+inline void Vector3<T>::Normalize() {
 	double magnitude = Magnitude();
-	this->x = (T)((double)x / magnitude);
-	this->y = (T)((double)y / magnitude);
-	this->z = (T)((double)z / magnitude);
+	if (magnitude == 0) return;
+
+	this->x = (T)(x / magnitude);
+	this->y = (T)(y / magnitude);
+	this->z = (T)(z / magnitude);
 }
 
 
