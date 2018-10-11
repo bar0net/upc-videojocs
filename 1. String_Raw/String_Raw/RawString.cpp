@@ -5,11 +5,7 @@ String::String() : String("")
 { }
 
 String::String(const char* string) {
-	// Do a first pass to determine the size of the input string
-	// and allocate the corresponding memory
-	mem_alloc = 0;
-	while (*(string + mem_alloc) != 0) 
-		++mem_alloc;
+	mem_alloc = InputLength(string);
 	this->string = (char*)std::malloc(sizeof(char) * (mem_alloc + 1));
 	
 	// Copy all memory positions. Add 1 to 'mem_alloc' to account for
@@ -46,6 +42,21 @@ String::~String() {
 	if (string != nullptr) std::free(this->string);
 }
 
+
+String & String::operator= (const char *string) {
+	if (this->string != nullptr) std::free(this->string);
+	
+	mem_alloc = InputLength(string);
+	this->string = (char*)std::malloc(sizeof(char) * (mem_alloc + 1));
+
+	for (unsigned int i = 0; i < mem_alloc; i++)
+		*(this->string + i) = *(string + i);
+	*(this->string + mem_alloc) = 0;
+	++mem_alloc;
+
+	return *this;
+}
+
 String String::operator+ (const String other) const {
 	return String(*this, other);
 }
@@ -65,4 +76,19 @@ int String::Length () const {
 	if (mem_alloc == 0) return 0;
 
 	return mem_alloc;
+}
+
+void String::Clear() {
+	if (string != nullptr) std::free(this->string);
+
+	mem_alloc = 0;
+	this->string = (char*)std::malloc(sizeof(char));
+	*(this->string) = 0;
+}
+
+int String::InputLength(const char* string) {
+	int len = 0;
+	while (*(string + len) != 0)
+		++len;
+	return len;
 }

@@ -3,9 +3,6 @@
 
 class String 
 {
-	char* string;
-	int mem_alloc;
-
 public:
 	String();
 
@@ -17,6 +14,8 @@ public:
 
 	virtual ~String();
 
+	String & operator= (const char *string);
+
 	String operator+ (const String other) const;
 
 	bool operator== (const String &other) const;
@@ -24,6 +23,14 @@ public:
 	int Length() const;
 
 	char* Value() const { return string; }
+
+	void Clear();
+
+private:
+	char* string;
+	unsigned int mem_alloc;
+
+	static int InputLength(const char* string);
 
 };
 
