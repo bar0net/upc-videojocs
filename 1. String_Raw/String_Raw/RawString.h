@@ -7,6 +7,8 @@ class String
 	int mem_alloc;
 
 public:
+	String();
+
 	String(const char* string);
 
 	String(const String &other);
@@ -19,7 +21,7 @@ public:
 
 	bool operator== (const String &other) const;
 
-	int Length() const { return mem_alloc - 1; }
+	int Length() const;
 
 	char* Value() const { return string; }
 

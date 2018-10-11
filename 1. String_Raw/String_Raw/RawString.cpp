@@ -1,6 +1,9 @@
 #include "RawString.h"
 #include <cstdlib>
 
+String::String() : String("")
+{ }
+
 String::String(const char* string) {
 	// Do a first pass to determine the size of the input string
 	// and allocate the corresponding memory
@@ -40,7 +43,7 @@ String::String(const String &a, const String &b) {
 }
 
 String::~String() {
-	std::free(this->string);
+	if (string != nullptr) std::free(this->string);
 }
 
 String String::operator+ (const String other) const {
@@ -56,4 +59,10 @@ bool String::operator== (const String &other) const {
 	}
 
 	return true;
+}
+
+int String::Length () const {
+	if (mem_alloc == 0) return 0;
+
+	return mem_alloc;
 }
