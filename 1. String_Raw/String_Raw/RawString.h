@@ -20,7 +20,7 @@ public:
 
 	bool operator== (const String &other) const;
 
-	int Length() const;
+	inline int Length() const;
 
 	char* Value() const { return string; }
 
@@ -33,6 +33,12 @@ private:
 	static int InputLength(const char* string);
 
 };
+
+int String::Length() const {
+	if (mem_alloc == 0) return 0;
+
+	return mem_alloc-1;
+}
 
 
 #endif // !_RAW_STRING_

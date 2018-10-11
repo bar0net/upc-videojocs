@@ -72,12 +72,6 @@ bool String::operator== (const String &other) const {
 	return true;
 }
 
-int String::Length () const {
-	if (mem_alloc == 0) return 0;
-
-	return mem_alloc;
-}
-
 void String::Clear() {
 	if (string != nullptr) std::free(this->string);
 
