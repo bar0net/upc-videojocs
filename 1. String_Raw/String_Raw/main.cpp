@@ -6,6 +6,10 @@ int main(void) {
 	String b(a);
 	String c = a + b;
 	String d("hella");
+	String e;
+	String f = d + e;
+
+	e = "jello";
 
 	bool z = (a == b);
 	bool y = (a == c);
