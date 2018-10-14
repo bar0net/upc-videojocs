@@ -9,8 +9,8 @@
 // Reference at https://www.youtube.com/watch?v=OEhmUuehGOA
 ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 {
-	position.x = 100;
-	position.y = 128; //216;
+	position.x = 100.0;
+	position.y = 128.0; //216;
 
 	// idle animation (arcade sprite sheet)
 	idle.frames.push_back({7, 14, 60, 90});
@@ -49,6 +49,7 @@ bool ModulePlayer::Start()
 	LOG("Loading player");
 
 	graphics = App->textures->Load("ryu4.png"); // arcade version
+	curr_animation = &idle;
 
 	return true;
 }
@@ -69,7 +70,59 @@ update_status ModulePlayer::Update()
 	// TODO 9: Draw the player with its animation
 	// make sure to detect player movement and change its
 	// position while cycling the animation(check Animation.h)
-	App->renderer->Blit(graphics, position.x, position.y, &(forward.GetCurrentFrame()), 1.0f);
+	HandleInput();
+
+	App->renderer->Blit(graphics, (int)position.x, (int)position.y, &((*curr_animation).GetCurrentFrame()), 1.0f);
 
 	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::HandleInput() 
+{
+	switch (state)
+	{
+	case (PlayerState::PLAYER_IDLE):
+		if (App->input->GetKey(SDL_SCANCODE_A) == KeyState::KEY_REPEAT) ChangeState(PlayerState::PLAYER_BACKWARD);
+		if (App->input->GetKey(SDL_SCANCODE_D) == KeyState::KEY_REPEAT) ChangeState(PlayerState::PLAYER_FORWARD);
+		break;
+
+	case (PlayerState::PLAYER_FORWARD):
+		if (App->input->GetKey(SDL_SCANCODE_D) == KeyState::KEY_UP) ChangeState(PlayerState::PLAYER_IDLE);
+		else 
+		{
+			if (position.x < 820) position.x += (_PLAYER_SPEED_ * App->delta_time);
+		}
+		break;
+
+	case (PlayerState::PLAYER_BACKWARD):
+		if (App->input->GetKey(SDL_SCANCODE_A) == KeyState::KEY_UP) ChangeState(PlayerState::PLAYER_IDLE);
+		else 
+		{
+			if (position.x > 10) position.x -= (_PLAYER_SPEED_ * App->delta_time);
+		}
+		break;
+	default:
+		break;
+	}
+
+}
+
+void ModulePlayer::ChangeState(PlayerState new_state) 
+{
+	switch (new_state)
+	{
+	case PlayerState::PLAYER_IDLE:
+		curr_animation = &idle;
+		break;
+	case PlayerState::PLAYER_FORWARD:
+		curr_animation = &forward;
+		break;
+	case PlayerState::PLAYER_BACKWARD:
+		curr_animation = &backward;
+		break;
+	default:
+		break;
+	}
+
+	state = new_state;
 }

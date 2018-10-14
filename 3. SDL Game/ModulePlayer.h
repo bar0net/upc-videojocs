@@ -8,9 +8,18 @@
 
 struct SDL_Texture;
 
+enum class PlayerState 
+{
+	PLAYER_IDLE = 0,
+	PLAYER_FORWARD,
+	PLAYER_BACKWARD
+};
+
 class ModulePlayer : public Module
 {
 public:
+	const float _PLAYER_SPEED_ = 60.0f;
+
 	ModulePlayer(bool start_enabled = true);
 	~ModulePlayer();
 
@@ -18,6 +27,8 @@ public:
 	update_status Update();
 	bool CleanUp();
 	Animation* curr_animation = &backward;
+	void HandleInput();
+	void ChangeState(PlayerState new_state);
 
 public:
 
@@ -25,7 +36,8 @@ public:
 	Animation idle;
 	Animation backward;
 	Animation forward;
-	iPoint position;
+	Point<double> position;
+	PlayerState state = PlayerState::PLAYER_IDLE;
 };
 
 #endif // __MODULEPLAYER_H__

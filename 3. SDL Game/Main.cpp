@@ -22,8 +22,15 @@ int main(int argc, char ** argv)
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
+	// Time Control
+	Uint64 now = SDL_GetPerformanceCounter();
+	Uint64 last = 0;
+
 	while (state != MAIN_EXIT)
 	{
+		last = now;
+		now = SDL_GetPerformanceCounter();
+
 		switch (state)
 		{
 		case MAIN_CREATION:
@@ -58,6 +65,10 @@ int main(int argc, char ** argv)
 				LOG("Application Update exits with error -----");
 				state = MAIN_EXIT;
 			}
+			else
+			{
+				App->delta_time = 0.001 * (1000 * (now - last) / (double)SDL_GetPerformanceFrequency());
+			}
 
 			if (update_return == UPDATE_STOP)
 				state = MAIN_FINISH;
@@ -77,7 +88,6 @@ int main(int argc, char ** argv)
 			state = MAIN_EXIT;
 
 			break;
-
 		}
 	}
 

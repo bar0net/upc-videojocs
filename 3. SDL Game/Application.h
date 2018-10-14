@@ -34,9 +34,9 @@ public:
 	ModuleFadeToBlack* fade;
 	ModulePlayer* player;
 	ModuleSceneKen* scene_ken;
+	double delta_time = 0;
 
 private:
-
 	std::list<Module*> modules;
 
 };
