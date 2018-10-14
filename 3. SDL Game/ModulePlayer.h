@@ -8,11 +8,24 @@
 
 struct SDL_Texture;
 
+enum class HADOUKEN_PROGRESS 
+{
+	HADOUKEN_NONE = 0,
+	HADOUKEN_DOWN,
+	HADOUKEN_DOWN_FWD,
+	HADOUKEN_FWD,
+	HADOUKEN_EXECUTE
+};
+
 enum class PlayerState 
 {
 	PLAYER_IDLE = 0,
 	PLAYER_FORWARD,
-	PLAYER_BACKWARD
+	PLAYER_BACKWARD,
+	PLAYER_DUCKING_IDLE,
+	PLAYER_DUCKING_FWD,
+	PLAYER_PUNCH,
+	PLAYER_HADOUKEN
 };
 
 class ModulePlayer : public Module
@@ -29,13 +42,21 @@ public:
 	Animation* curr_animation = &backward;
 	void HandleInput();
 	void ChangeState(PlayerState new_state);
+	void HadoukenCheck();
+
+	HADOUKEN_PROGRESS hadouken_progress = HADOUKEN_PROGRESS::HADOUKEN_NONE;
 
 public:
 
 	SDL_Texture* graphics = nullptr;
+	
 	Animation idle;
 	Animation backward;
 	Animation forward;
+	Animation ducking;
+	Animation punch;
+	Animation hadouken;
+
 	Point<double> position;
 	PlayerState state = PlayerState::PLAYER_IDLE;
 };
