@@ -17,12 +17,15 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	int red_ship_y;
+
 public:
-	
 	SDL_Texture* graphics = nullptr;
 	SDL_Rect ground;
 	SDL_Rect background;
+	SDL_Rect red_ship;
 	Animation flag;
+	Animation girl;
 };
 
 #endif // __MODULESCENEKEN_H__

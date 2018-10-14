@@ -21,6 +21,10 @@ ModuleSceneKen::ModuleSceneKen(bool start_enabled) : Module(start_enabled)
 
 	// TODO 2 : setup the foreground (red ship) with
 	// coordinates x,y,w,h from ken_stage.png
+	red_ship.x = 8;
+	red_ship.y = 24;
+	red_ship.w = 522;
+	red_ship.h = 181;
 
 	// Background / sky
 	background.x = 72;
@@ -35,6 +39,11 @@ ModuleSceneKen::ModuleSceneKen(bool start_enabled) : Module(start_enabled)
 	flag.speed = 0.08f;
 
 	// TODO 4: Setup Girl Animation from coordinates from ken_stage.png
+	girl.frames.push_back({ 624, 16, 32, 56 });
+	girl.frames.push_back({ 624, 80, 32, 56 });
+	girl.frames.push_back({ 624, 144, 32, 56 });
+	girl.frames.push_back({ 624, 80, 32, 56 });
+	girl.speed = 0.08f;
 
 }
 
@@ -49,7 +58,10 @@ bool ModuleSceneKen::Start()
 	graphics = App->textures->Load("ken_stage.png");
 
 	// TODO 7: Enable the player module
+	App->player->Enable();
+
 	// TODO 0: trigger background music
+	App->audio->PlayMusic("ken.ogg");
 	
 	return true;
 }
@@ -69,15 +81,18 @@ bool ModuleSceneKen::CleanUp()
 update_status ModuleSceneKen::Update()
 {
 	// TODO 5: make sure the ship goes up and down
+	red_ship_y = (int)(2*cos(SDL_GetTicks()/800.0) );
 
 	// Draw everything --------------------------------------
 	// TODO 1: Tweak the movement speed of the sea&sky + flag to your taste
-	App->renderer->Blit(graphics, 0, 0, &background, 1.0f); // sea and sky
-	App->renderer->Blit(graphics, 560, 8, &(flag.GetCurrentFrame()), 1.0f); // flag animation
+	App->renderer->Blit(graphics, 0, 0, &background, 0.75f); // sea and sky
+	App->renderer->Blit(graphics, 560, 8, &(flag.GetCurrentFrame()), 0.75f); // flag animation
 
 	// TODO 3: Draw the ship. Be sure to tweak the speed.
+	App->renderer->Blit(graphics, 0, red_ship_y, &red_ship, 0.92f);
 
 	// TODO 6: Draw the girl. Make sure it follows the ship movement!
+	App->renderer->Blit(graphics, 192, 104 + red_ship_y, &(girl.GetCurrentFrame()), 0.92f);
 	
 	App->renderer->Blit(graphics, 0, 170, &ground);
 

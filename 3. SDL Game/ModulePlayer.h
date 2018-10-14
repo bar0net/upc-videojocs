@@ -17,12 +17,14 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
+	Animation* curr_animation = &backward;
 
 public:
 
 	SDL_Texture* graphics = nullptr;
 	Animation idle;
 	Animation backward;
+	Animation forward;
 	iPoint position;
 };
 
