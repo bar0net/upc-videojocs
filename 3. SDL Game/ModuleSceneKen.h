@@ -18,6 +18,7 @@ public:
 	bool CleanUp();
 
 	int red_ship_y;
+	bool can_transition = true;
 
 public:
 	SDL_Texture* graphics = nullptr;
