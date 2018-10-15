@@ -57,7 +57,7 @@ String & String::operator= (const char *string) {
 	return *this;
 }
 
-String String::operator+ (const String other) const {
+String String::operator+ (const String &other) const {
 	return String(*this, other);
 }
 
@@ -75,7 +75,7 @@ bool String::operator== (const String &other) const {
 void String::Clear() {
 	if (string != nullptr) std::free(this->string);
 
-	mem_alloc = 0;
+	mem_alloc = 1;
 	this->string = (char*)std::malloc(sizeof(char));
 	*(this->string) = 0;
 }

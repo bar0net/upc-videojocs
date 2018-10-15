@@ -16,7 +16,7 @@ public:
 
 	String & operator= (const char *string);
 
-	String operator+ (const String other) const;
+	String operator+ (const String &other) const;
 
 	bool operator== (const String &other) const;
 
