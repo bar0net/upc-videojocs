@@ -21,7 +21,6 @@ bool ModuleRenderExercise::Init()
 	triangle->AddVertex(-1.0f, -1.0f, 0.0f );
 	triangle->AddVertex( 1.0f, -1.0f, 0.0f );
 	triangle->AddVertex( 0.0f,  1.0f, 0.0f );
-	float* v = triangle->GetVertices();
 
     float vertex_buffer_data[] = {
         -1.0f, -1.0f, 0.0f,
