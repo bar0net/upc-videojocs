@@ -45,26 +45,21 @@ std::vector<float>* SceneObject::GetVertices()
 }
 
 math::float4x4 SceneObject::ModelMatrix()
-{
-	math::float4x4 rotX = math::float4x4::identity;
-	math::float4x4 rotY = math::float4x4::identity;
-	math::float4x4 rotZ = math::float4x4::identity;
-	math::float4x4 scaleMatrix = math::float4x4::identity;
-	math::float4x4 translation = math::float4x4::identity;
+{	
+	math::float4x4 rot = math::float4x4::identity; // RotX * RotY * RotZ
+	math::float4x4 scaleTranslate = math::float4x4::zero; // Scale * Translation
 
-	rotX[1][1] = cos(DEG2RAD * rotation.x); rotX[1][2] = -sin(DEG2RAD * rotation.x);
-	rotX[2][1] = sin(DEG2RAD * rotation.x); rotX[2][2] =  cos(DEG2RAD * rotation.x);
+	float CX = cos(DEG2RAD * rotation.x); float SX = sin(DEG2RAD * rotation.x);
+	float CY = cos(DEG2RAD * rotation.y); float SY = sin(DEG2RAD * rotation.y);
+	float CZ = cos(DEG2RAD * rotation.z); float SZ = sin(DEG2RAD * rotation.z);
 
-	rotY[0][0] =  cos(DEG2RAD * rotation.y); rotY[0][2] = sin(DEG2RAD * rotation.y);
-	rotY[2][0] = -sin(DEG2RAD * rotation.y); rotY[2][2] = cos(DEG2RAD * rotation.y);
+	rot[0][0] =  CY * CZ;			rot[0][1] = -CY * SZ;			rot[0][2] =  SY;
+	rot[1][0] = CX*SZ + SX*SY*CZ;	rot[1][1] = CX*CZ - SX*SY*SZ;	rot[1][2] = -SX*CY;
+	rot[2][0] = SX*SZ - CX*SY*CZ;	rot[2][1] = -CX*SY*SZ + SX*CZ;	rot[2][2] = CX*CY;
 
-	rotZ[0][0] = cos(DEG2RAD * rotation.z); rotZ[0][1] = -sin(DEG2RAD * rotation.z);
-	rotZ[1][0] = sin(DEG2RAD * rotation.z); rotZ[1][1] =  cos(DEG2RAD * rotation.z);
+	scaleTranslate[0][0] = scale.x;					scaleTranslate[1][1] = scale.y;					scaleTranslate[2][2] = scale.z;
+	scaleTranslate[0][3] = scale.x * position.x;	scaleTranslate[1][3] = scale.y * position.y;	scaleTranslate[2][3] = scale.z * position.z;
+	scaleTranslate[3][3] = 1;
 
-	scaleMatrix[0][0] = scale.x; scaleMatrix[1][1] = scale.y; scaleMatrix[2][2] = scale.z;
-
-	translation[0][3] = position.x; translation[1][3] = position.y; translation[2][3] = position.z;
-
-	// TODO: Create Model Matrix
-	return rotX * rotY * rotZ * scaleMatrix * translation;
+	return rot * scaleTranslate;
 }
