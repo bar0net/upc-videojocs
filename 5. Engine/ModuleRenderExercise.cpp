@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include <vector>
+
 #include "ModuleRenderExercise.h"
 #include "ModuleWindow.h"
 #include "SceneObject.h"
@@ -18,21 +20,23 @@ ModuleRenderExercise::~ModuleRenderExercise()
 bool ModuleRenderExercise::Init()
 {
 	SceneObject* triangle = new SceneObject();
+	triangle->position = { 0.3f, -0.1f, -0.8f };
+	triangle->scale = { 0.1f, 0.2f, 1.0f };
+	triangle->rotation = { 0.0f, 0.0f, -45.0f };
+	
 	triangle->AddVertex(-1.0f, -1.0f, 0.0f );
 	triangle->AddVertex( 1.0f, -1.0f, 0.0f );
 	triangle->AddVertex( 0.0f,  1.0f, 0.0f );
 
-    float vertex_buffer_data[] = {
-        -1.0f, -1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f,  1.0f, 0.0f,
-	};
+	std::vector<float>* vertex_buffer_data = triangle->GetVertices();
+	//math::float4x4 a = triangle->ModelMatrix();
 
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (*vertex_buffer_data).size() * sizeof(float), (*vertex_buffer_data).data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	delete vertex_buffer_data;
     return vbo;
 }
 

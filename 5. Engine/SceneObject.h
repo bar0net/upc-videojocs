@@ -1,6 +1,8 @@
 #pragma once
 
 #include <list>
+#include <vector>
+
 #include "Math/float3.h"
 #include "Math/float4x4.h"
 
@@ -15,7 +17,7 @@ public:
 	virtual void CleanUp() {}
 
 	virtual void AddVertex(float x, float y, float z);
-	virtual float* GetVertices();
+	virtual std::vector<float>* GetVertices();
 	virtual math::float4x4 ModelMatrix();
 
 	std::list<math::float3> vertices;
