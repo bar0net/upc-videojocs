@@ -23,22 +23,12 @@ void SceneObject::AddVertex(float x, float y, float z)
 std::vector<float>* SceneObject::GetVertices() 
 {
 	std::vector<float>* output = new std::vector<float>;
-	math::float4x4 matrix = ModelMatrix();
-	math::float4 v;
 
 	for (std::list<math::float3>::iterator it = vertices.begin(); it != vertices.end(); ++it) 
-	{
-		v[0] = (*it).x; v[1] = (*it).y; v[2] = (*it).z; v[3] = 1;
-		v = matrix * v;
-
-		(*output).push_back(v.x);
-		(*output).push_back(v.y);
-		(*output).push_back(v.z); 
-
-		/*
+	{		
 		(*output).push_back((*it).x);
 		(*output).push_back((*it).y);
-		(*output).push_back((*it).z);*/
+		(*output).push_back((*it).z);
 	}
 
 	return output;

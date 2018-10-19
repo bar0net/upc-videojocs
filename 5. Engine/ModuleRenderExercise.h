@@ -14,8 +14,12 @@ public:
 	bool            CleanUp ();
 
 private:
-    unsigned vbo        = 0;
+	void LoadShaderProgram();
+	char* LoadShaderData(const char* filename);
 
+    unsigned vbo        = 0;
+	unsigned program	= 0;
+	unsigned vao		= 0;
 };
 
 #endif /* __ModuleRenderExercise_h__ */
