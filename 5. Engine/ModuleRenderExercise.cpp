@@ -26,7 +26,7 @@ bool ModuleRenderExercise::Init()
 
 	// Create Objects
 	triangle = new SceneObject();
-	triangle->position = { 0.5f, 0.0f, 20.0f };
+	triangle->position = { 10.0f, 0.0f, 10.0f };
 	triangle->scale = { 0.5f, 1.0f, 0.5f };
 	triangle->rotation = { 0.0f, 0.0f, 10.0f };
 	
@@ -52,7 +52,7 @@ bool ModuleRenderExercise::Init()
 
 	// Camera
 	camera = new SceneObject();
-	camera->position = { 0.0f, 0.0f, 0.0f };
+	camera->position = { 0.0f, 5.0f, 0.0f };
 	camera->scale = { 1.0f, 1.0f, 1.0f };
 	camera->rotation = { 0.0f, 0.0f, 0.0f };
 
