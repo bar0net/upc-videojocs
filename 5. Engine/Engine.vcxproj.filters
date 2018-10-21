@@ -342,4 +342,8 @@
       <UniqueIdentifier>{3efc07e0-c451-4d68-9871-37f5712082d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Game\default.fs" />
+    <None Include="Game\Default.vs" />
+  </ItemGroup>
 </Project>

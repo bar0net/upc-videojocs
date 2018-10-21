@@ -21,14 +21,36 @@ bool ModuleRenderExercise::Init()
 {
 
 	// Create Objects
-	SceneObject* triangle = new SceneObject();
-	triangle->position = { 0.2f, 0.0f, 0.0f };
-	triangle->scale = { 0.2f, 0.5f, 1.0f };
-	triangle->rotation = { 0.0f, 0.0f, -45.0f };
+	triangle = new SceneObject();
+	triangle->position = { 0.5f, 0.0f, 0.0f };
+	triangle->scale = { 0.5f, 1.0f, 0.5f };
+	triangle->rotation = { 0.0f, 0.0f, 10.0f };
 	
-	triangle->AddVertex(-0.5f, -0.5f, 0.0f );
-	triangle->AddVertex( 0.5f, -0.5f, 0.0f );
-	triangle->AddVertex( 0.0f,  0.5f, 0.0f );
+	// Base (Red)
+	triangle->AddVertex(-0.5f, -0.5f, -0.33f );
+	triangle->AddVertex( 0.0f, -0.5f,  0.66f );
+	triangle->AddVertex( 0.5f, -0.5f, -0.33f );
+
+	// Wall (Blue)
+	triangle->AddVertex(0.5f, -0.5f, -0.33f);
+	triangle->AddVertex(0.0f, -0.5f, 0.66f);
+	triangle->AddVertex(0.0f, 0.5f, 0.0f);
+
+	// Wall (Green)
+	triangle->AddVertex(0.0f, -0.5f, 0.66f);
+	triangle->AddVertex(-0.5f, -0.5f, -0.33f);
+	triangle->AddVertex(0.0f, 0.5f, 0.0f);
+
+	// Wall (White)
+	triangle->AddVertex(-0.5f, -0.5f, -0.33f);
+	triangle->AddVertex(0.5f, -0.5f, -0.33f);
+	triangle->AddVertex(0.0f, 0.5f, 0.0f);
+
+	// Camera
+	camera = new SceneObject();
+	camera->position = { 0.0f, 0.0f, 0.0f };
+	camera->scale = { 1.0f, 1.0f, 1.0f };
+	camera->rotation = { 0.0f, 0.0f, 0.0f };
 
 	// Load GL Program
 	LoadShaderProgram();
@@ -43,7 +65,7 @@ bool ModuleRenderExercise::Init()
 	// Set Projection, View & Model
 	math::float4x4 model = triangle->ModelMatrix();
 	math::float4x4 view = math::float4x4::identity;
-	math::float4x4 projection = math::float4x4::identity;
+	math::float4x4 projection = LookAt(*triangle, *camera);
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
@@ -56,13 +78,28 @@ bool ModuleRenderExercise::Init()
 update_status ModuleRenderExercise::Update()
 {
 
+	++(triangle->rotation.y);
+	math::float4x4 model = triangle->ModelMatrix();
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
+
 	glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0 );
 
+	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 0.0f, 0.0f);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDisableVertexAttribArray(0);
 
+	glUniform3f(glGetUniformLocation(program, "albedo"),0.0f,1.0f,0.0f);
+	glDrawArrays(GL_TRIANGLES, 3, 3);
+
+	glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 0.0f, 1.0f);
+	glDrawArrays(GL_TRIANGLES, 6, 3);
+
+	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
+	glDrawArrays(GL_TRIANGLES, 9, 3);
+
+    glDisableVertexAttribArray(0);
+	
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return UPDATE_CONTINUE;
 }
@@ -71,6 +108,9 @@ bool ModuleRenderExercise::CleanUp()
 {
     if(vbo != 0)		glDeleteBuffers(1, &vbo);
 	if (program != 0)	glDeleteProgram(program);
+
+	delete triangle;
+	delete camera;
 
 	return true;
 }
@@ -149,3 +189,25 @@ char* ModuleRenderExercise::LoadShaderData(const char* filename)
 	return data;
 }
 
+
+math::float4x4 ModuleRenderExercise::LookAt(const SceneObject &target, const SceneObject &eye)
+{
+	math::float3 up(
+		cos(eye.rotation.x) * sin(eye.rotation.z) + sin(eye.rotation.x) * sin(eye.rotation.y) * cos(eye.rotation.z),
+		cos(eye.rotation.x) * cos(eye.rotation.z) - sin(eye.rotation.x) * sin(eye.rotation.y) * sin(eye.rotation.z),
+		-sin(eye.rotation.x) * cos(eye.rotation.y)
+	);
+
+	math::float3 f(target.position - eye.position); f.Normalize();
+	math::float3 s(f.Cross(up)); s.Normalize();
+	math::float3 u(s.Cross(f));
+
+	math::float4x4 matrix = {
+		 s.x,	 s.y,	 s.z,	-s.Dot(eye.position),
+		 u.x,	 u.y,	 u.z,	-u.Dot(eye.position),
+		-f.x,	-f.y,	-f.z,	 f.Dot(eye.position),
+		0.0f,	0.0f,	0.0f,	 1.0f
+	};
+
+	return matrix;
+}

@@ -37,7 +37,8 @@ std::vector<float>* SceneObject::GetVertices()
 math::float4x4 SceneObject::ModelMatrix()
 {	
 	math::float4x4 rot = math::float4x4::identity; // RotX * RotY * RotZ
-	math::float4x4 scaleTranslate = math::float4x4::zero; // Scale * Translation
+	math::float4x4 scaleM = math::float4x4::identity; 
+	math::float4x4 translate = math::float4x4::identity;
 
 	float CX = cos(DEG2RAD * rotation.x); float SX = sin(DEG2RAD * rotation.x);
 	float CY = cos(DEG2RAD * rotation.y); float SY = sin(DEG2RAD * rotation.y);
@@ -47,9 +48,8 @@ math::float4x4 SceneObject::ModelMatrix()
 	rot[1][0] = CX*SZ + SX*SY*CZ;	rot[1][1] = CX*CZ - SX*SY*SZ;	rot[1][2] = -SX*CY;
 	rot[2][0] = SX*SZ - CX*SY*CZ;	rot[2][1] = -CX*SY*SZ + SX*CZ;	rot[2][2] = CX*CY;
 
-	scaleTranslate[0][0] = scale.x;					scaleTranslate[1][1] = scale.y;					scaleTranslate[2][2] = scale.z;
-	scaleTranslate[0][3] = scale.x * position.x;	scaleTranslate[1][3] = scale.y * position.y;	scaleTranslate[2][3] = scale.z * position.z;
-	scaleTranslate[3][3] = 1;
+	scaleM[0][0] = scale.x;				scaleM[1][1] = scale.y;				scaleM[2][2] = scale.z;
+	translate[0][3] = position.x;		translate[1][3] = position.y;		translate[2][3] = position.z;
 
-	return rot * scaleTranslate;
+	return  translate * scaleM * rot;
 }
