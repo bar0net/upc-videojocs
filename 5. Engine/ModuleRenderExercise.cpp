@@ -8,6 +8,10 @@
 
 #include "GL/glew.h"
 #include "SDL.h"
+#include "MathGeoLib/include/Geometry/Frustum.h"
+
+#define PI 3.14169258f
+#define ASPECT 1.7777778f
 
 ModuleRenderExercise::ModuleRenderExercise()
 {
@@ -22,7 +26,7 @@ bool ModuleRenderExercise::Init()
 
 	// Create Objects
 	triangle = new SceneObject();
-	triangle->position = { 0.5f, 0.0f, 0.0f };
+	triangle->position = { 0.5f, 0.0f, 20.0f };
 	triangle->scale = { 0.5f, 1.0f, 0.5f };
 	triangle->rotation = { 0.0f, 0.0f, 10.0f };
 	
@@ -64,8 +68,8 @@ bool ModuleRenderExercise::Init()
 
 	// Set Projection, View & Model
 	math::float4x4 model = triangle->ModelMatrix();
-	math::float4x4 view = math::float4x4::identity;
-	math::float4x4 projection = LookAt(*triangle, *camera);
+	math::float4x4 view = LookAt(*triangle, *camera);
+	math::float4x4 projection = ProjectionMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
@@ -210,4 +214,21 @@ math::float4x4 ModuleRenderExercise::LookAt(const SceneObject &target, const Sce
 	};
 
 	return matrix;
+}
+
+math::float4x4 ModuleRenderExercise::ProjectionMatrix()
+{
+	math::Frustum frustrum;
+	frustrum.type = FrustumType::PerspectiveFrustum;
+
+	frustrum.pos = float3::zero;
+	frustrum.front = -float3::unitZ;
+	frustrum.up = float3::unitY;
+
+	frustrum.nearPlaneDistance = 0.1f;
+	frustrum.farPlaneDistance = 100.0f;
+	frustrum.verticalFov = PI / 4.0f;
+	frustrum.horizontalFov = 1.0f * atanf(tanf(frustrum.verticalFov * 0.5f) * ASPECT);
+	
+	return frustrum.ProjectionMatrix();
 }

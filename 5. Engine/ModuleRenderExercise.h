@@ -21,6 +21,7 @@ public:
 private:
 	void LoadShaderProgram();
 	char* LoadShaderData(const char* filename);
+	math::float4x4 ProjectionMatrix();
 
     unsigned vbo        = 0;
 	unsigned program	= 0;
