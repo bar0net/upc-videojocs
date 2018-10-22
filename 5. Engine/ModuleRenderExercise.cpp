@@ -127,6 +127,7 @@ void ModuleRenderExercise::LoadShaderProgram()
 
 	// ==== COMPILE VERTEX SHADER ====
 	char* vShaderData = LoadShaderData("Default.vs");
+	assert(vShaderData != nullptr);
 	vShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vShader, 1, &vShaderData, NULL);
 	glCompileShader(vShader);
@@ -136,6 +137,7 @@ void ModuleRenderExercise::LoadShaderProgram()
 
 	// ==== COMPILE FRAGMENT SHADER ====
 	char* fShaderData = LoadShaderData("default.fs");
+	assert(fShaderData != nullptr);
 	fShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fShader, 1, &fShaderData, NULL);
 	glCompileShader(fShader);

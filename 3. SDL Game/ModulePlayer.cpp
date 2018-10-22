@@ -13,11 +13,11 @@ ModulePlayer::ModulePlayer(bool start_enabled) : Module(start_enabled)
 	position.y = 128.0; //216;
 
 	// idle animation (arcade sprite sheet)
-	idle.frames.push_back({7, 14, 60, 90});
-	idle.frames.push_back({95, 15, 60, 89});
-	idle.frames.push_back({184, 14, 60, 90});
+	idle.frames.push_back({4, 14, 60, 93});
+	idle.frames.push_back({91, 15, 60, 93});
+	idle.frames.push_back({181, 14, 60, 93});
 	idle.frames.push_back({276, 11, 60, 93});
-	idle.frames.push_back({366, 12, 60, 92});
+	idle.frames.push_back({365, 12, 60, 93});
 	idle.speed = 0.2f;
 	
 	// walk backward animation (arcade sprite sheet)
