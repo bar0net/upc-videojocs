@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{6E9FF945-1B35-43C2-8EFD-383CDCE73A7B}</ProjectGuid>
+    <RootNamespace>imgui</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\example_allegro5\imconfig_allegro5.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\example_apple_metal\Shared\AppDelegate.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\example_apple_metal\Shared\Renderer.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\example_apple_metal\Shared\ViewController.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_allegro5.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx10.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx11.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx12.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx9.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_freeglut.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_glfw.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_marmalade.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_metal.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_opengl2.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_osx.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_sdl.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_vulkan.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\imgui_impl_win32.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\libs\gl3w\GL\gl3w.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\libs\gl3w\GL\glcorearb.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\libs\glfw\include\GLFW\glfw3.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\libs\glfw\include\GLFW\glfw3native.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\examples\libs\usynergy\uSynergy.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\imconfig.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\imgui.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\imgui_internal.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\imstb_rectpack.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\imstb_textedit.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="..\5. Engine\imgui-docking\misc\freetype\imgui_freetype.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_allegro5\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_freeglut_opengl2\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_glfw_opengl2\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_glfw_opengl3\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_glfw_vulkan\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_marmalade\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_null\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_sdl_opengl2\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_sdl_opengl3\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_sdl_vulkan\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_win32_directx10\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_win32_directx11\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_win32_directx12\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\example_win32_directx9\main.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_allegro5.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx10.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx12.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_dx9.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_freeglut.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_marmalade.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_opengl2.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_sdl.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\libs\gl3w\GL\gl3w.c" />
+    <ClCompile Include="..\5. Engine\imgui-docking\examples\libs\usynergy\uSynergy.c" />
+    <ClCompile Include="..\5. Engine\imgui-docking\imgui.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\imgui_demo.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\imgui_draw.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\misc\fonts\binary_to_compressed_c.cpp" />
+    <ClCompile Include="..\5. Engine\imgui-docking\misc\freetype\imgui_freetype.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
