@@ -2,6 +2,10 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "SDL/include/SDL.h"
+#include "ModuleWindow.h"
+
+#include "imgui.h"
+#include "examples/imgui_impl_sdl.h"
 
 ModuleInput::ModuleInput()
 {}
@@ -27,11 +31,28 @@ bool ModuleInput::Init()
 }
 
 // Called every draw update
-update_status ModuleInput::Update()
+update_status ModuleInput::PreUpdate()
 {
 	SDL_PumpEvents();
 
 	keyboard = SDL_GetKeyboardState(NULL);
+
+	SDL_Event event;
+	bool done = false;
+
+	while (done)
+	{
+		while (SDL_PollEvent(&event))
+		{
+			ImGui_ImplSDL2_ProcessEvent(&event);
+
+			if (event.type == SDL_QUIT)
+				done = true;
+
+			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(App->window->window))
+				done = true;
+		}
+	}
 
 	return UPDATE_CONTINUE;
 }

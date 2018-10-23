@@ -40,7 +40,7 @@ update_status ModuleEditor::PostUpdate()
 		// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
 		// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
 		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-		SDL_Event event;
+		/*SDL_Event event;
 
 		while (SDL_PollEvent(&event))
 		{
@@ -51,7 +51,7 @@ update_status ModuleEditor::PostUpdate()
 
 			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(App->window->window))
 				done = true;
-		}
+		}*/
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(App->window->window);
