@@ -332,3 +332,12 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# =========================
+# Ignore GLEW
+
+!*/glew-2.1.0/bin/Release/Win32/*
+!*/glew-2.1.0/bin/Release/x64/*
+!*/glew-2.1.0/include/GL/*
+!*/glew-2.1.0/lib/Release/Win32/*
+!*/glew-2.1.0/lib/Release/x64/*
