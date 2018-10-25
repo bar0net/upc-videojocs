@@ -255,12 +255,20 @@ void ModuleRenderExercise::DrawPlane()
 {
 	math::float4x4 identity = math::float4x4::identity;
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &identity[0][0]);
-	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
-	glLineWidth(0.2f);
 
 	for (float i = -200; i < 200; i++)
 	{
 		if (i == 0) continue;
+		if ((int)i % 5 == 0)
+		{
+			glLineWidth(2.0f);
+			glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
+		}
+		else
+		{
+			glLineWidth(1.0f);
+			glUniform3f(glGetUniformLocation(program, "albedo"), 0.66f, 0.66f, 0.66f);
+		}
 
 		glBegin(GL_LINES);
 		glVertex3f(i, 0.0f, -200.f);
@@ -273,6 +281,8 @@ void ModuleRenderExercise::DrawPlane()
 		glEnd();
 	}
 
+	glLineWidth(2.0f);
+	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
 	glBegin(GL_LINES);
 	glVertex3f(0.0, 0.0f, -200.f);
 	glVertex3f(0.0f, 0.0f, 0.f);

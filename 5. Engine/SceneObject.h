@@ -20,6 +20,7 @@ public:
 
 	virtual void AddVertex(float x, float y, float z);
 	virtual std::vector<float>* GetVertices();
+	virtual math::float4x4 RotationMatrix();
 	virtual math::float4x4 ModelMatrix();
 
 	std::list<math::float3> vertices;
