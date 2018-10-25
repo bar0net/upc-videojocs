@@ -77,6 +77,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="EditorCameraMove.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="imgui-docking\examples\imgui_impl_opengl3.h" />
     <ClInclude Include="imgui-docking\examples\imgui_impl_sdl.h" />
@@ -154,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="EditorCameraMove.cpp" />
     <ClCompile Include="imgui-docking\examples\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui-docking\examples\imgui_impl_sdl.cpp" />
     <ClCompile Include="imgui-docking\imgui.cpp" />

@@ -6,15 +6,17 @@
 #include "Math/float3.h"
 #include "Math/float4x4.h"
 
+class Behaviour;
+
 class SceneObject
 {
 public:
 	SceneObject();
 	virtual ~SceneObject();
 
-	virtual void Start() {}
-	virtual void Update() {}
-	virtual void CleanUp() {}
+	virtual void Start();
+	virtual void Update();
+	virtual void CleanUp();
 
 	virtual void AddVertex(float x, float y, float z);
 	virtual std::vector<float>* GetVertices();
@@ -24,5 +26,7 @@ public:
 	math::float3 position = math::float3::zero;
 	math::float3 rotation = math::float3::zero;
 	math::float3 scale = math::float3::one;
+
+	std::list<Behaviour*> behaviours;
 };
 

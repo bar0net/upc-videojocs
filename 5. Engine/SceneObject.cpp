@@ -1,6 +1,7 @@
 #include "SceneObject.h"
 
 #include "MathGeoLib.h"
+#include "Behaviour.h"
 
 #define DEG2RAD 0.0174532925f
 
@@ -11,7 +12,28 @@ SceneObject::SceneObject()
 
 SceneObject::~SceneObject()
 {
-	
+	for (std::list<Behaviour*>::iterator it = behaviours.begin(); it != behaviours.end(); ++it)
+		delete(*it);
+	behaviours.clear();
+}
+
+void SceneObject::Start()
+{
+	for (std::list<Behaviour*>::iterator it = behaviours.begin(); it != behaviours.end(); ++it)
+		(*it)->Start();
+}
+
+void SceneObject::Update()
+{
+	for (std::list<Behaviour*>::iterator it = behaviours.begin(); it != behaviours.end(); ++it)
+		(*it)->Update();
+
+}
+
+void SceneObject::CleanUp()
+{
+	for (std::list<Behaviour*>::iterator it = behaviours.begin(); it != behaviours.end(); ++it)
+		(*it)->CleanUp();
 }
 
 void SceneObject::AddVertex(float x, float y, float z) 

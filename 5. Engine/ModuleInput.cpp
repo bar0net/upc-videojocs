@@ -7,12 +7,19 @@
 #include "imgui.h"
 #include "examples/imgui_impl_sdl.h"
 
+#define MAX_KEYS 300
+
 ModuleInput::ModuleInput()
-{}
+{
+	keyboard = new KeyState[MAX_KEYS];
+	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
+}
 
 // Destructor
 ModuleInput::~ModuleInput()
-{}
+{
+	delete[](keyboard);
+}
 
 // Called before render is available
 bool ModuleInput::Init()
@@ -35,10 +42,27 @@ update_status ModuleInput::PreUpdate()
 {
 	SDL_PumpEvents();
 
-	keyboard = SDL_GetKeyboardState(NULL);
-
 	SDL_Event event;
 	bool done = false;
+
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	for (int i = 0; i < MAX_KEYS; ++i)
+	{
+		if (keys[i] == 1)
+		{
+			if (keyboard[i] == KEY_IDLE)
+				keyboard[i] = KEY_DOWN;
+			else
+				keyboard[i] = KEY_REPEAT;
+		}
+		else
+		{
+			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
+				keyboard[i] = KEY_UP;
+			else
+				keyboard[i] = KEY_IDLE;
+		}
+	}
 
 	while (done)
 	{

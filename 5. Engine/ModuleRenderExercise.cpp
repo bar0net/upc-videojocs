@@ -9,6 +9,7 @@
 #include "GL/glew.h"
 #include "SDL.h"
 #include "MathGeoLib/include/Geometry/Frustum.h"
+#include "EditorCameraMove.h"
 
 #define PI 3.14169258f
 #define ASPECT 1.7777778f
@@ -26,7 +27,7 @@ bool ModuleRenderExercise::Init()
 
 	// Create Objects
 	triangle = new SceneObject();
-	triangle->position = { 10.0f, 0.0f, 10.0f };
+	triangle->position = { 0.0f, 1.0f, 0.0f };
 	triangle->scale = { 0.5f, 1.0f, 0.5f };
 	triangle->rotation = { 0.0f, 0.0f, 10.0f };
 	
@@ -52,9 +53,10 @@ bool ModuleRenderExercise::Init()
 
 	// Camera
 	camera = new SceneObject();
-	camera->position = { 0.0f, 5.0f, 0.0f };
+	camera->position = { 2.0f, 2.0f, 10.0f };
 	camera->scale = { 1.0f, 1.0f, 1.0f };
 	camera->rotation = { 0.0f, 0.0f, 0.0f };
+	camera->behaviours.push_back(new EditorCameraMove(camera));
 
 	// Load GL Program
 	LoadShaderProgram();
@@ -68,7 +70,8 @@ bool ModuleRenderExercise::Init()
 
 	// Set Projection, View & Model
 	math::float4x4 model = triangle->ModelMatrix();
-	math::float4x4 view = LookAt(*triangle, *camera);
+	//math::float4x4 view = LookAt(*triangle, *camera);
+	math::float4x4 view = camera->ModelMatrix().Inverted();
 	math::float4x4 projection = ProjectionMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
@@ -76,11 +79,21 @@ bool ModuleRenderExercise::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	delete vertex_buffer_data;
+
+	triangle->Start();
+	camera->Start();
+
     return vbo;
 }
 
 update_status ModuleRenderExercise::Update()
 {
+	triangle->Update();
+	camera->Update();
+	math::float4x4 view = camera->ModelMatrix().Inverted();
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
+
+	DrawPlane();
 
 	++(triangle->rotation.y);
 	math::float4x4 model = triangle->ModelMatrix();
@@ -110,6 +123,9 @@ update_status ModuleRenderExercise::Update()
 
 bool ModuleRenderExercise::CleanUp()
 {
+	triangle->CleanUp();
+	camera->CleanUp();
+
     if(vbo != 0)		glDeleteBuffers(1, &vbo);
 	if (program != 0)	glDeleteProgram(program);
 
@@ -233,4 +249,64 @@ math::float4x4 ModuleRenderExercise::ProjectionMatrix()
 	frustrum.horizontalFov = 1.0f * atanf(tanf(frustrum.verticalFov * 0.5f) * ASPECT);
 	
 	return frustrum.ProjectionMatrix();
+}
+
+void ModuleRenderExercise::DrawPlane()
+{
+	math::float4x4 identity = math::float4x4::identity;
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &identity[0][0]);
+	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
+	glLineWidth(0.2f);
+
+	for (float i = -200; i < 200; i++)
+	{
+		if (i == 0) continue;
+
+		glBegin(GL_LINES);
+		glVertex3f(i, 0.0f, -200.f);
+		glVertex3f(i, 0.0f,  200.f);
+		glEnd();
+
+		glBegin(GL_LINES);
+		glVertex3f(-200.f, 0.0f, i);
+		glVertex3f( 200.f, 0.0f, i);
+		glEnd();
+	}
+
+	glBegin(GL_LINES);
+	glVertex3f(0.0, 0.0f, -200.f);
+	glVertex3f(0.0f, 0.0f, 0.f);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex3f(0.0, 0.0f, 1.f);
+	glVertex3f(0.0f, 0.0f, 200.f);
+	glEnd();
+
+	glBegin(GL_LINES);
+	glVertex3f(-200.f, 0.0f, 0.0f);
+	glVertex3f(0.f, 0.0f, 0.0f);
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex3f(1.f, 0.0f, 0.0f);
+	glVertex3f(200.f, 0.0f, 0.0f);
+	glEnd();
+
+	glLineWidth(2.f);
+	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 0.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(1.0f, 0.0f, 0.0f);
+	glEnd();
+
+	glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 1.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glEnd();
+
+	glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 0.0f, 1.0f);
+	glBegin(GL_LINES);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 1.0f);
+	glEnd();
 }

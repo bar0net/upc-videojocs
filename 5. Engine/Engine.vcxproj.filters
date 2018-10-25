@@ -145,6 +145,9 @@
     <ClCompile Include="imgui-docking\examples\imgui_impl_sdl.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="EditorCameraMove.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModuleWindow.h">
@@ -371,6 +374,12 @@
     </ClInclude>
     <ClInclude Include="imgui-docking\imstb_truetype.h">
       <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Behaviour.h">
+      <Filter>SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCameraMove.h">
+      <Filter>SceneObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
