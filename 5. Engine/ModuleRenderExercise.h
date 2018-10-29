@@ -27,6 +27,8 @@ private:
     unsigned vbo        = 0;
 	unsigned program	= 0;
 	unsigned vao		= 0;
+	unsigned ibo		= 0;
+	unsigned int textureID = 0;
 
 	SceneObject* triangle;
 	SceneObject* camera;

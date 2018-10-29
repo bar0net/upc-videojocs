@@ -55,7 +55,7 @@ bool ModuleRenderExercise::Init()
 	frustum.nearPlaneDistance = 0.1f;
 	frustum.farPlaneDistance = 100.0f;
 	frustum.verticalFov   = math::pi/4.0f;
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * float(width)/float(height));
+	frustum.horizontalFov = 2.f * atan(tan(frustum.verticalFov * 0.5f) * float(width)/float(height));
 
 	proj = frustum.ProjectionMatrix();
 

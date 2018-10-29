@@ -5,6 +5,7 @@
 #include "ModuleRenderExercise.h"
 #include "ModuleWindow.h"
 #include "SceneObject.h"
+#include "ModuleTextures.h"
 
 #include "GL/glew.h"
 #include "SDL.h"
@@ -27,33 +28,18 @@ bool ModuleRenderExercise::Init()
 
 	// Create Objects
 	triangle = new SceneObject();
-	triangle->position = { 0.0f, 1.0f, 0.0f };
-	triangle->scale = { 0.5f, 1.0f, 0.5f };
-	triangle->rotation = { 0.0f, 0.0f, 10.0f };
+	triangle->position = { 0.0f, 2.0f, 1.0f };
+	triangle->scale = { 1.0f, 1.0f, 1.0f };
+	triangle->rotation = { 0.0f, 0.0f, 0.0f };
 	
-	// Base (Red)
-	triangle->AddVertex(-0.5f, -0.5f, -0.33f );
-	triangle->AddVertex( 0.0f, -0.5f,  0.66f );
-	triangle->AddVertex( 0.5f, -0.5f, -0.33f );
+	// (x,y,z,uv0,uv1)
+	triangle->AddVertex(-0.5f,  0.5f, 0.f, 0.0f, 1.0f );
+	triangle->AddVertex( 0.5f,  0.5f, 0.f, 1.0f, 1.0f );
+	triangle->AddVertex(-0.5f, -0.5f, 0.f, 0.0f, 0.0f );
+	triangle->AddVertex( 0.5f, -0.5f, 0.f, 1.0f, 0.0f );
 
-	// Wall (Blue)
-	triangle->AddVertex(0.5f, -0.5f, -0.33f);
-	triangle->AddVertex(0.0f, -0.5f, 0.66f);
-	triangle->AddVertex(0.0f, 0.5f, 0.0f);
-
-	// Wall (Green)
-	triangle->AddVertex(0.0f, -0.5f, 0.66f);
-	triangle->AddVertex(-0.5f, -0.5f, -0.33f);
-	triangle->AddVertex(0.0f, 0.5f, 0.0f);
-
-	// Wall (White)
-	triangle->AddVertex(-0.5f, -0.5f, -0.33f);
-	triangle->AddVertex(0.5f, -0.5f, -0.33f);
-	triangle->AddVertex(0.0f, 0.5f, 0.0f);
-
-	// Camera
 	camera = new SceneObject();
-	camera->position = { 2.0f, 2.0f, 10.0f };
+	camera->position = { 0.0f, 1.0f, 10.0f };
 	camera->scale = { 1.0f, 1.0f, 1.0f };
 	camera->rotation = { 0.0f, 0.0f, 0.0f };
 	camera->behaviours.push_back(new EditorCameraMove(camera));
@@ -64,19 +50,29 @@ bool ModuleRenderExercise::Init()
 
 	// Fill Buffer
 	std::vector<float>* vertex_buffer_data = triangle->GetVertices();
+	std::vector<unsigned int> indices = { 1,0,2,1,2,3 };
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, (*vertex_buffer_data).size() * sizeof(float), (*vertex_buffer_data).data(), GL_STATIC_DRAW);
 
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+	const char* filename = "Lenna.png";
+	textureID = App->textures->Load(filename);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+
 	// Set Projection, View & Model
 	math::float4x4 model = triangle->ModelMatrix();
-	//math::float4x4 view = LookAt(*triangle, *camera);
 	math::float4x4 view = camera->ModelMatrix().Inverted();
 	math::float4x4 projection = ProjectionMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	delete vertex_buffer_data;
 
@@ -95,27 +91,27 @@ update_status ModuleRenderExercise::Update()
 
 	DrawPlane();
 
-	++(triangle->rotation.y);
+	//++(triangle->rotation.y);
 	math::float4x4 model = triangle->ModelMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
-
-	glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0 );
-
 	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 0.0f, 0.0f);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
 
-	glUniform3f(glGetUniformLocation(program, "albedo"),0.0f,1.0f,0.0f);
-	glDrawArrays(GL_TRIANGLES, 3, 3);
+	// bind vbo
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0 );
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
 
-	glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 0.0f, 1.0f);
-	glDrawArrays(GL_TRIANGLES, 6, 3);
-
-	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
-	glDrawArrays(GL_TRIANGLES, 9, 3);
+	// bind ibo
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
     glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 	
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return UPDATE_CONTINUE;
@@ -126,6 +122,9 @@ bool ModuleRenderExercise::CleanUp()
 	triangle->CleanUp();
 	camera->CleanUp();
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	if (ibo != 0) glDeleteBuffers(1, &ibo);
     if(vbo != 0)		glDeleteBuffers(1, &vbo);
 	if (program != 0)	glDeleteProgram(program);
 
@@ -165,10 +164,19 @@ void ModuleRenderExercise::LoadShaderProgram()
 	program = glCreateProgram();
 	glAttachShader(program, vShader);
 	glAttachShader(program, fShader);
+
+	while (glGetError() != GL_NO_ERROR);
 	glLinkProgram(program);
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) __debugbreak();
+
+
+	while (glGetError() != GL_NO_ERROR);
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (success == GL_FALSE)
 	{
+		GLenum error = glGetError();
+		__debugbreak();
 		GLint maxLength = 0;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
@@ -177,6 +185,8 @@ void ModuleRenderExercise::LoadShaderProgram()
 		program = 0;
 
 		LOG("[GL] Program failed to link.")
+		
+		LOG(&infoLog[0])
 	}
 	else
 	{
@@ -246,7 +256,10 @@ math::float4x4 ModuleRenderExercise::ProjectionMatrix()
 	frustrum.nearPlaneDistance = 0.1f;
 	frustrum.farPlaneDistance = 100.0f;
 	frustrum.verticalFov = PI / 4.0f;
-	frustrum.horizontalFov = 1.0f * atanf(tanf(frustrum.verticalFov * 0.5f) * ASPECT);
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+
+	frustrum.horizontalFov = 2.0f * atanf(tanf(frustrum.verticalFov * 0.5f) * w / h);
 	
 	return frustrum.ProjectionMatrix();
 }

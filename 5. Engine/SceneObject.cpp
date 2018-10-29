@@ -36,9 +36,9 @@ void SceneObject::CleanUp()
 		(*it)->CleanUp();
 }
 
-void SceneObject::AddVertex(float x, float y, float z) 
+void SceneObject::AddVertex(float x, float y, float z, float uv0, float uv1) 
 {
-	math::float3 v = { x,y,z };
+	std::vector<float> v = { x, y, z, uv0, uv1 };
 	vertices.push_back(v);
 }
 
@@ -46,11 +46,9 @@ std::vector<float>* SceneObject::GetVertices()
 {
 	std::vector<float>* output = new std::vector<float>;
 
-	for (std::list<math::float3>::iterator it = vertices.begin(); it != vertices.end(); ++it) 
+	for (std::list<std::vector<float>>::iterator it = vertices.begin(); it != vertices.end(); ++it)
 	{		
-		(*output).push_back((*it).x);
-		(*output).push_back((*it).y);
-		(*output).push_back((*it).z);
+		output->insert(output->end(), it->begin(), it->end());
 	}
 
 	return output;

@@ -3,7 +3,12 @@
 uniform vec3 albedo;
 out vec4 color;
 
+in vec2 uv0;
+
+uniform sampler2D texture0;
+
 void main() 
 {    
-	color = vec4(albedo.x, albedo.y, albedo.z, 1.0f); 
+	//color = vec4(1, 0, 0, 1.0f);
+	color = texture2D(texture0, uv0);
 }
