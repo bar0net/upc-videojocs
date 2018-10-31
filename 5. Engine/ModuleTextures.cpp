@@ -49,6 +49,13 @@ unsigned int ModuleTextures::Load(const char* path)
 
 	if (success)
 	{
+		ILinfo ImageInfo;
+		iluGetImageInfo(&ImageInfo);
+		if (ImageInfo.Origin == IL_ORIGIN_UPPER_LEFT)
+		{
+			iluFlipImage();
+		}
+
 		success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
 		if (!success) 
 		{
