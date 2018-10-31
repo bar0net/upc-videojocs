@@ -12,6 +12,11 @@
 #include "MathGeoLib/include/Geometry/Frustum.h"
 #include "EditorCameraMove.h"
 
+#include "Shader.h"
+#include "VertexBuffer.h"
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+
 #define PI 3.14169258f
 #define ASPECT 1.7777778f
 
@@ -45,35 +50,40 @@ bool ModuleRenderExercise::Init()
 	camera->behaviours.push_back(new EditorCameraMove(camera));
 
 	// Load GL Program
-	LoadShaderProgram();
-	glUseProgram(program);
+
+	shader = new Shader("Default.vs", "default.fs");
+	shader->Bind();
 
 	// Fill Buffer
 	std::vector<float>* vertex_buffer_data = triangle->GetVertices();
 	std::vector<unsigned int> indices = { 1,0,2,1,2,3 };
 
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, (*vertex_buffer_data).size() * sizeof(float), (*vertex_buffer_data).data(), GL_STATIC_DRAW);
+	vbo = new VertexBuffer(4*5, vertex_buffer_data->data());
+	vbo->Bind();
 
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, (*vertex_buffer_data).size() * sizeof(float), (*vertex_buffer_data).data(), GL_STATIC_DRAW);
+	vao = new VertexArray();
+	vao->AddAttrib(vbo, 3, VA_Float, 5 * sizeof(float), 0);
+	vao->AddAttrib(vbo, 2, VA_Float, 5 * sizeof(float), 3 * sizeof(float));
 
+	ibo = new IndexBuffer(6, indices.data());
+	ibo->Bind();
+
+	// Load Texture
 	const char* filename = "Lenna.png";
 	textureID = App->textures->Load(filename);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+	glUniform1i(glGetUniformLocation(shader->program, "texture0"), 0);
 
 	// Set Projection, View & Model
 	math::float4x4 model = triangle->ModelMatrix();
 	math::float4x4 view = camera->ModelMatrix().Inverted();
 	math::float4x4 projection = ProjectionMatrix();
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &projection[0][0]);
-
+	shader->SetUniform4x4("model", &model[0][0]);
+	shader->SetUniform4x4("view", &view[0][0]);
+	shader->SetUniform4x4("proj", &projection[0][0]);
+	
 	delete vertex_buffer_data;
 
 	triangle->Start();
@@ -87,33 +97,30 @@ update_status ModuleRenderExercise::Update()
 	triangle->Update();
 	camera->Update();
 	math::float4x4 view = camera->ModelMatrix().Inverted();
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
+	shader->Bind();
+	shader->SetUniform4x4("view", &view[0][0]);
+
 
 	DrawPlane();
 
 	//++(triangle->rotation.y);
 	math::float4x4 model = triangle->ModelMatrix();
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &model[0][0]);
-	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 0.0f, 0.0f);
+	shader->Bind();
+	shader->SetUniform4x4("model", &model[0][0]);
+	shader->SetUniform3("albedo", 1.0f, 0.0f, 0.0f);
 
-	// bind vbo
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0 );
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
+	vao->Bind();
+	ibo->Bind();
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glUniform1i(glGetUniformLocation(program, "texture0"), 0);
+	glUniform1i(glGetUniformLocation(shader->program, "texture0"), 0);
 
 	// bind ibo
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 
-    glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	vao->UnBind();
 	return UPDATE_CONTINUE;
 }
 
@@ -124,101 +131,19 @@ bool ModuleRenderExercise::CleanUp()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	if (ibo != 0) glDeleteBuffers(1, &ibo);
-    if(vbo != 0)		glDeleteBuffers(1, &vbo);
-	if (program != 0)	glDeleteProgram(program);
+	//if (ibo != 0) glDeleteBuffers(1, &ibo);
+    //if(vbo != 0)		glDeleteBuffers(1, &vbo);
+	//if (program != 0)	glDeleteProgram(program);
 
 	delete triangle;
 	delete camera;
 
+	delete shader;
+	delete vbo;
+	delete vao;
+	delete ibo;
+
 	return true;
-}
-
-void ModuleRenderExercise::LoadShaderProgram() 
-{
-	GLint success = 0;
-	unsigned vShader = 0;
-	unsigned fShader = 0;
-
-	// ==== COMPILE VERTEX SHADER ====
-	char* vShaderData = LoadShaderData("Default.vs");
-	assert(vShaderData != nullptr);
-	vShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vShader, 1, &vShaderData, NULL);
-	glCompileShader(vShader);
-	glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
-	if (success == GL_FALSE)	LOG("[GL] Vertex Shader failed to compile.")
-	else LOG("[GL] Vertex Shader successfully compiled")
-
-	// ==== COMPILE FRAGMENT SHADER ====
-	char* fShaderData = LoadShaderData("default.fs");
-	assert(fShaderData != nullptr);
-	fShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fShader, 1, &fShaderData, NULL);
-	glCompileShader(fShader);
-	glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
-	if (success == GL_FALSE) LOG("[GL] Fragment Shader failed to compile.")
-	else LOG("[GL] Fragment Shader successfully compiled")
-
-	// ==== LINK PROGRAM ====
-	program = glCreateProgram();
-	glAttachShader(program, vShader);
-	glAttachShader(program, fShader);
-
-	while (glGetError() != GL_NO_ERROR);
-	glLinkProgram(program);
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR) __debugbreak();
-
-
-	while (glGetError() != GL_NO_ERROR);
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-	if (success == GL_FALSE)
-	{
-		GLenum error = glGetError();
-		__debugbreak();
-		GLint maxLength = 0;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-		std::vector<GLchar> infoLog(maxLength);
-		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
-		program = 0;
-
-		LOG("[GL] Program failed to link.")
-		
-		LOG(&infoLog[0])
-	}
-	else
-	{
-		LOG("[GL] Program successfully linked")
-	}
-
-	glDetachShader(program, vShader);
-	glDetachShader(program, fShader);
-
-	if (vShader != 0)	glDeleteShader(vShader);
-	if (fShader != 0)	glDeleteShader(fShader);
-}
-
-char* ModuleRenderExercise::LoadShaderData(const char* filename)
-{
-	char* data = nullptr;
-	FILE* file = nullptr;
-	fopen_s(&file, filename, "rb");
-
-	if (file)
-	{
-		fseek(file, 0, SEEK_END);
-		int size = ftell(file);
-		rewind(file);
-		data = (char*)malloc(size + 1);
-
-		fread(data, 1, size, file);
-		data[size] = 0;
-
-		fclose(file);
-	}
-	return data;
 }
 
 
@@ -267,7 +192,8 @@ math::float4x4 ModuleRenderExercise::ProjectionMatrix()
 void ModuleRenderExercise::DrawPlane()
 {
 	math::float4x4 identity = math::float4x4::identity;
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &identity[0][0]);
+	shader->SetUniform4x4("model", &identity[0][0]);
+	//glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, &identity[0][0]);
 
 	for (float i = -200; i < 200; i++)
 	{
@@ -275,12 +201,14 @@ void ModuleRenderExercise::DrawPlane()
 		if ((int)i % 5 == 0)
 		{
 			glLineWidth(2.0f);
-			glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
+			shader->SetUniform3("albedo", 1.0f, 1.0f, 1.0f);
+			//glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
 		}
 		else
 		{
 			glLineWidth(1.0f);
-			glUniform3f(glGetUniformLocation(program, "albedo"), 0.66f, 0.66f, 0.66f);
+			shader->SetUniform3("albedo", 0.66f, 0.66f, 0.66f);
+			//glUniform3f(glGetUniformLocation(program, "albedo"), 0.66f, 0.66f, 0.66f);
 		}
 
 		glBegin(GL_LINES);
@@ -295,7 +223,8 @@ void ModuleRenderExercise::DrawPlane()
 	}
 
 	glLineWidth(2.0f);
-	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
+	shader->SetUniform3("albedo", 1.0f, 1.0f, 1.0f);
+	//glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 1.0f, 1.0f);
 	glBegin(GL_LINES);
 	glVertex3f(0.0, 0.0f, -200.f);
 	glVertex3f(0.0f, 0.0f, 0.f);
@@ -315,19 +244,22 @@ void ModuleRenderExercise::DrawPlane()
 	glEnd();
 
 	glLineWidth(2.f);
-	glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 0.0f, 0.0f);
+	shader->SetUniform3("albedo", 1.0f, 0.0f, 0.0f);
+	//glUniform3f(glGetUniformLocation(program, "albedo"), 1.0f, 0.0f, 0.0f);
 	glBegin(GL_LINES);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(1.0f, 0.0f, 0.0f);
 	glEnd();
 
-	glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 1.0f, 0.0f);
+	shader->SetUniform3("albedo", 0.0f, 1.0f, 0.0f);
+	//glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 1.0f, 0.0f);
 	glBegin(GL_LINES);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 1.0f, 0.0f);
 	glEnd();
 
-	glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 0.0f, 1.0f);
+	shader->SetUniform3("albedo", 0.0f, 0.0f, 1.0f);
+	//glUniform3f(glGetUniformLocation(program, "albedo"), 0.0f, 0.0f, 1.0f);
 	glBegin(GL_LINES);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(0.0f, 0.0f, 1.0f);
